@@ -70,5 +70,6 @@ export default {
   border-radius: 5px;
   background: none;
   color: #0275ff;
+  cursor: auto;
 }
 </style>

@@ -19,33 +19,24 @@ namespace CSharpBackEnd.Controllers
         public ParcerXmlController(IParcerXmlService parcerXmlService) 
             => _parcerXmlService = parcerXmlService;
 
+
         [HttpGet]
         [Route("links")]
         public async Task<IActionResult> GetAsync([FromQuery] PaginationDTO model)
         {
             if (model == null)
                 return BadRequest();
-            try
-            {
-                var queryable = _parcerXmlService.GetLinks();
 
-                if (queryable == null)
-                    return NotFound();
+            var queryable = _parcerXmlService.GetLinks();
 
-                await HttpContext.InsertPaginationParametrInResponse(queryable, model.PageSize);
-                var resultLinks = await queryable.Paginate(model).ToListAsync();
-               
-                return Ok(resultLinks);
-
-            }
-            catch (ArgumentNullException)
-            {
+            if (queryable == null)
                 return NotFound();
-            }
-            catch (Exception)
-            {
-                return BadRequest();
-            }
+
+            await HttpContext.InsertPaginationParametrInResponse(queryable, model);
+            var resultLinks = await queryable.Paginate(model).ToListAsync();
+
+            return Ok(resultLinks);
+
 
         }
 
@@ -55,44 +46,27 @@ namespace CSharpBackEnd.Controllers
         {
             if (model == null)
                 return BadRequest();
-            try
-            {
-                var queryable = _parcerXmlService.GetParcedLinksById(id);
+            var queryable = _parcerXmlService.GetParcedLinksById(id);
 
-                if (queryable == null)
-                    return NotFound();
-
-                await HttpContext.InsertPaginationParametrInResponse(queryable, model.PageSize);
-                var resultLinks = await queryable.Paginate(model).ToListAsync();
-
-                return Ok(resultLinks);
-            }
-            catch (ArgumentNullException)
-            {
+            if (queryable == null)
                 return NotFound();
-            }
-            catch (Exception)
-            {
-                return BadRequest();
-            }
+
+            await HttpContext.InsertPaginationParametrInResponse(queryable, model);
+            var resultLinks = await queryable.Paginate(model).ToListAsync();
+
+            return Ok(resultLinks);
         }
 
 
         [HttpPost]
-        public async Task<IActionResult> Parce(LinkModel model)
+        public async Task<IActionResult> Parce([FromBody] LinkModel model)
         {
             if (model == null || String.IsNullOrEmpty(model.Link))
                 return BadRequest();
 
-            try
-            {
-                var parceList = await _parcerXmlService.ParceAsync(model.Link);
-                return Ok();
-            }
-            catch (Exception)
-            {
-                return BadRequest();
-            }
+            var parceList = await _parcerXmlService.ParceAsync(model.Link);
+            return Ok();
+
         }
     }
 }
