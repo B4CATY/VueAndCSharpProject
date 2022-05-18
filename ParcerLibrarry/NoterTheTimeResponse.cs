@@ -31,18 +31,14 @@ namespace ParcerLibrarry
                 timer.Stop();
                 return timer.Elapsed.TotalMilliseconds;
             }
-            catch (WebException ex)
-            {
-              
-                
-                
+            catch (WebException) {
+
                 timer.Stop();
                 return -1;
             }
            
-            catch (Exception ex)
+            catch (Exception)
             {
-                
                 timer.Stop();
                 return -1;
             }

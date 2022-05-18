@@ -1,4 +1,5 @@
 using CSharpBackEnd.Data;
+using CSharpBackEnd.Middleware;
 using CSharpBackEnd.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -32,11 +33,17 @@ namespace CSharpBackEnd
             services.AddControllers();
              services.AddCors(options =>
              {
-                 options.AddPolicy("Allowlh8080", policy =>
+                 options.AddPolicy("AllowlhVue", policy =>
                  {
-                     policy.AllowAnyHeader();
-                     policy.AllowAnyMethod();
-                     policy.WithOrigins("http://localhost:8080");
+                 
+                 policy.WithOrigins("http://localhost:8081")
+                     .AllowAnyHeader()
+                     .AllowAnyMethod()
+                     .WithExposedHeaders("X-Total-Count");
+                     policy.WithOrigins("http://localhost:8080")
+                     .AllowAnyHeader()
+                     .AllowAnyMethod()
+                     .WithExposedHeaders("X-Total-Count");
                  });
              });
             services.AddScoped<IParcerXmlService, ParcerXmlService>();
@@ -49,12 +56,13 @@ namespace CSharpBackEnd
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseMiddleware<ExceptionHandlerMiddleware>();
             app.UseHttpsRedirection();
 
             app.UseStaticFiles();
 
             app.UseRouting();
-            app.UseCors("Allowlh8080");
+            app.UseCors("AllowlhVue");
 
             //app.UseApiVersioning();
             app.UseEndpoints(endpoints =>
